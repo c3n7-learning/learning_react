@@ -1,6 +1,10 @@
 import { useRouter } from "next/router";
 import { getFilteredEvents } from "../../dummy-data";
 import EventList from "../../components/events/event-list";
+import ResultsTitle from "../../components/results-title/results-title";
+import { Fragment } from "react";
+import Button from "../../components/ui/button";
+import ErrorAlert from "../../components/error-alert/error-alert";
 
 function FilteredEventsPage() {
   const router = useRouter();
@@ -24,7 +28,14 @@ function FilteredEventsPage() {
     numMonth > 12 ||
     numMonth < 1
   ) {
-    return <p>Invalid filter. Please adjust your values</p>;
+    return (
+      <Fragment>
+        <ErrorAlert>Invalid filter. Please adjust your values</ErrorAlert>
+        <div className="center">
+          <Button linke="/events">Show All Events</Button>
+        </div>
+      </Fragment>
+    );
   }
 
   const filteredEvents = getFilteredEvents({
@@ -33,13 +44,23 @@ function FilteredEventsPage() {
   });
 
   if (!filteredEvents || filteredEvents.length == 0) {
-    return <p>No events found for the chosen flter!</p>;
+    return (
+      <Fragment>
+        <ErrorAlert>No events found for the chosen flter!</ErrorAlert>
+        <div className="center">
+          <Button linke="/events">Show All Events</Button>
+        </div>
+      </Fragment>
+    );
   }
 
+  const date = new Date(numYear, numMonth - 1);
+
   return (
-    <div>
+    <Fragment>
+      <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
-    </div>
+    </Fragment>
   );
 }
 
