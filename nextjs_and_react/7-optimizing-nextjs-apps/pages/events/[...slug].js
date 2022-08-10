@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { getFilteredEvents } from "../../helpers/api-util";
+import Head from "next/head";
 import EventList from "../../components/events/event-list";
 import ResultsTitle from "../../components/results-title/results-title";
 import { Fragment, useEffect, useState } from "react";
@@ -87,6 +87,13 @@ function FilteredEventsPage() {
 
   return (
     <Fragment>
+      <Head>
+        <title>Filtered events</title>
+        <meta
+          name="description"
+          content={`All events for ${numMonth}/${numYear}`}
+        />
+      </Head>
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </Fragment>
