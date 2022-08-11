@@ -22,6 +22,7 @@ async function createUser(email, password) {
 }
 
 function AuthForm() {
+  const router = useRouter();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
 
@@ -32,7 +33,6 @@ function AuthForm() {
   }
 
   async function submitHandler(event) {
-    const router = useRouter();
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
