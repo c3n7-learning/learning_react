@@ -25,7 +25,7 @@ async function handler(req, res) {
 
   const client = await connectToDatabase();
 
-  const hashedPassword = hashPassword(password.trim());
+  const hashedPassword = await hashPassword(password.trim());
 
   const db = client.db();
 
