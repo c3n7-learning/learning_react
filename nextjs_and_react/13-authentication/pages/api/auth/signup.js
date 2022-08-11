@@ -1,11 +1,16 @@
-import { hash } from "bcryptjs";
 import { hashPassword } from "../../../lib/auth";
 import { connectToDatabase } from "../../../lib/db";
 
 async function handler(req, res) {
-  const data = req.body;
+  if (req.method !== "POST") {
+    return;
+  }
 
-  const { email, passord } = data;
+  const data = JSON.parse(req.body);
+
+  const { email, password } = data;
+
+  console.log(email, password, data, typeof data);
   if (
     !email ||
     !email.includes("@") ||
@@ -20,7 +25,7 @@ async function handler(req, res) {
 
   const client = await connectToDatabase();
 
-  const hashedPassword = hash(passord.trim());
+  const hashedPassword = hashPassword(password.trim());
 
   const db = client.db();
 
