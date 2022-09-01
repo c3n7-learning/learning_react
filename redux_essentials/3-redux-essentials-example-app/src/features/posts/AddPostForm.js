@@ -1,4 +1,3 @@
-import { nanoid } from '@reduxjs/toolkit'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { postAdded } from './postsSlice'
