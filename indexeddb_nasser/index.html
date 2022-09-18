@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IndexdDB</title>
+  </head>
+  <body>
+    <div>
+      <div>
+        <input type="text" id="txtDB" placeholder="Name" />
+        <br />
+        <br />
+      </div>
+      <div>
+        <input type="text" id="txtVersion" placeholder="Version" />
+        <br />
+        <br />
+      </div>
+      <button id="btnCreateDB">Create DB</button>
+
+      <br />
+      <br />
+
+      <button id="btnAddNote">Add Note</button>
+
+      <br />
+      <br />
+
+      <button id="btnViewNotes">View Notes</button>
+    </div>
+
+    <script>
+      const btnCreateDB = document.getElementById("btnCreateDB");
+      const btnAddNote = document.getElementById("btnAddNote");
+      const btnViewNotes1 = document.getElementById("btnViewNotes1");
+
+      btnCreateDB.addEventListener("click", createDB);
+      btnAddNote.addEventListener("click", addNote);
+      btnViewNotes.addEventListener("click", viewNotes);
+
+      let db;
+
+      function createDB() {
+        const dbName = document.getElementById("txtDB").value;
+        const dbVersion = document.getElementById("txtVersion").value;
+
+        const request = indexedDB.open(dbName, dbVersion);
+
+        request.onupgradeneeded = (e) => {
+          db = e.target.result;
+          // Like running migration
+
+          // note = {
+          //   title: "note1",  # keyPath is like our primary key
+          //   text: "this is a note"
+          // }
+          const pNotes = db.createObjectStore("personal_notes", {
+            keyPath: "title",
+          });
+
+          const todoNotes = db.createObjectStore("todo_notes", {
+            keyPath: "title",
+          });
+
+          console.log(`upgrade is called:: ${db.name} - ${db.version}`);
+        };
+
+        request.onsuccess = (e) => {
+          db = e.target.result;
+          console.log("success is called");
+        };
+
+        request.onerror = (e) => {
+          console.warn(`error is called:: ${e.target.error}`);
+        };
+      }
+
+      function addNote() {
+        const note = {
+          title: "note" + Math.random(),
+          text: "This is my note baby",
+        };
+
+        const tx = db.transaction("personal_notes", "readwrite");
+        tx.onerror = (e) => console.warn(`Error! ${e.target.error}`);
+        const pNotes = tx.objectStore("personal_notes");
+        pNotes.add(note);
+      }
+
+      function viewNotes() {
+        const tx = db.transaction("personal_notes", "readonly");
+        const pNotes = tx.objectStore("personal_notes");
+        const request = pNotes.openCursor();
+        request.onsuccess = (e) => {
+          const cursor = e.target.result;
+
+          if (cursor) {
+            // do something
+            console.log(`Title:: ${cursor.key} - Text:: ${cursor.value.text}`);
+            cursor.continue();
+          }
+        };
+      }
+    </script>
+  </body>
+</html>
